@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teken de planning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col font-sans">
+
+    <header class="bg-gray-900 text-white p-4 shadow-md flex justify-between items-center relative" style="z-index: 100;">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-xl font-bold text-green-400">Teken de planning</h1>
+            
+            <div id="time-buttons" class="flex space-x-2 text-sm bg-gray-800 p-2 rounded">
+                <button onclick="setTimeslot('08:30')" id="btn-08:30" class="px-3 py-1 rounded bg-green-500 font-bold">08:30</button>
+                <button onclick="setTimeslot('09:45')" id="btn-09:45" class="px-3 py-1 rounded hover:bg-gray-700">09:45</button>
+                <button onclick="setTimeslot('10:30')" id="btn-10:30" class="px-3 py-1 rounded hover:bg-gray-700 text-yellow-300">10:30</button>
+                <button onclick="setTimeslot('11:15')" id="btn-11:15" class="px-3 py-1 rounded hover:bg-gray-700">11:15</button>
+                <button onclick="setTimeslot('13:00')" id="btn-13:00" class="px-3 py-1 rounded hover:bg-gray-700">13:00</button>
+                <button onclick="setTimeslot('15:00')" id="btn-15:00" class="px-3 py-1 rounded hover:bg-gray-700">15:00</button>
+                <button onclick="setTimeslot('19:30')" id="btn-19:30" class="px-3 py-1 rounded hover:bg-gray-700 text-yellow-300">19:30</button>
+            </div>
+            
+            <div class="flex items-center ml-4 bg-gray-800 p-1 rounded relative">
+                <span class="text-sm px-2 text-gray-300">Datum:</span>
+                <button onclick="toggleCalendar()" id="date-picker-btn" class="bg-gray-700 text-white px-3 py-1 rounded cursor-pointer outline-none w-32 font-bold flex justify-between items-center hover:bg-gray-600 transition">
+                    <span id="date-btn-text">24-okt</span>
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                
+                <div id="calendar-popup" class="hidden absolute right-0 top-full mt-2 bg-white rounded-lg shadow-2xl p-4 w-72 border border-gray-200 text-gray-800" style="z-index: 110;">
+                    <div class="flex justify-between items-center mb-3">
+                        <button onclick="changeMonth(-1)" class="p-1 hover:bg-gray-200 rounded text-gray-600 font-bold px-2">&lt;</button>
+                        <div id="calendar-month-year" class="font-bold text-sm"></div>
+                        <button onclick="changeMonth(1)" class="p-1 hover:bg-gray-200 rounded text-gray-600 font-bold px-2">&gt;</button>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-gray-400 uppercase mb-1">
+                        <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div><div>Za</div><div>Zo</div>
+                    </div>
+                    <div id="calendar-days" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 flex items-center space-x-6">
+            <div class="text-sm">
+                <span class="block text-gray-400 text-xs">Mini Doeltjes (O7)</span>
+                <span class="text-2xl font-bold text-yellow-400" id="count-mini">0</span>
+            </div>
+            <div class="text-sm">
+                <span class="block text-gray-400 text-xs">Kleine Doeltjes (O8-O12)</span>
+                <span class="text-2xl font-bold text-orange-400" id="count-klein">0</span>
+            </div>
+            <div class="text-sm">
+                <span class="block text-gray-400 text-xs">Grote Goals (9-tal)</span>
+                <span class="text-2xl font-bold text-blue-400" id="count-groot">0</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="bg-white border-b p-2 flex justify-center space-x-6 text-sm font-semibold shadow-sm items-center">
+        <div class="flex items-center space-x-2">
+            <span class="text-gray-500">Velden open:</span>
+            <button onclick="toggleAllFields()" class="text-[10px] bg-blue-100 hover:bg-blue-200 text-blue-800 px-2 py-1 rounded border border-blue-400 font-bold transition shadow-sm" title="Zet alle velden op álle dagen open of dicht">Overal Aan / Uit</button>
+        </div>
+        <label class="flex items-center space-x-1 cursor-pointer"><input type="checkbox" id="toggle-kgv6" class="form-checkbox text-green-500 h-4 w-4"> <span>KGV 6</span></label>
+        <label class="flex items-center space-x-1 cursor-pointer"><input type="checkbox" id="toggle-kgv5" class="form-checkbox text-green-500 h-4 w-4"> <span>KGV 5</span></label>
+        <label class="flex items-center space-x-1 cursor-pointer"><input type="checkbox" id="toggle-veld2" class="form-checkbox text-green-500 h-4 w-4"> <span>Veld 2 (Gras)</span></label>
+        <label class="flex items-center space-x-1 cursor-pointer"><input type="checkbox" id="toggle-veld4" class="form-checkbox text-green-500 h-4 w-4"> <span>Veld 4 (Gras)</span></label>
+        <label class="flex items-center space-x-1 cursor-pointer"><input type="checkbox" id="toggle-veld3" class="form-checkbox text-green-500 h-4 w-4"> <span>Veld 3 (Gras)</span></label>
+        <label class="flex items-center space-x-1 cursor-pointer"><input type="checkbox" id="toggle-kgv1" class="form-checkbox text-green-500 h-4 w-4"> <span>KGV 1</span></label>
+        
+        <div class="border-l-2 border-gray-300 pl-4 ml-2 flex items-center space-x-2">
+            <span class="text-gray-500 text-xs font-bold" title="Maximaal aantal wedstrijden per grasveld (per dag) voor automatische indeling">Max. op gras (p.v.):</span>
+            <input type="number" id="max-gras" value="2" min="0" max="6" class="w-12 border border-gray-400 p-0.5 rounded text-center text-xs font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400">
+        </div>
+    </div>
+
+    <div class="flex flex-1 overflow-hidden">
+        <aside class="w-80 bg-white border-r shadow-lg flex flex-col z-20">
+            <div class="p-4 bg-gray-50 border-b flex flex-col space-y-2">
+                <button onclick="document.getElementById('modal-add').classList.remove('hidden')" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm font-bold shadow transition">Nieuwe wedstrijd</button>
+                <button onclick="document.getElementById('modal-bulk').classList.remove('hidden')" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded text-sm font-bold shadow transition">Bulk Excel upload</button>
+                <button onclick="autoSchedule()" id="btn-auto" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded text-sm font-bold shadow transition mt-2 flex justify-center items-center">
+                    <span id="auto-text">Automatisch indelen</span>
+                </button>
+                <div class="flex space-x-2 mt-2">
+                    <button onclick="document.getElementById('modal-overview').classList.remove('hidden'); renderOverviewTable();" class="flex-1 bg-gray-800 hover:bg-gray-900 text-white py-1.5 rounded text-xs font-bold transition">Overzicht</button>
+                    <button onclick="document.getElementById('modal-teams').classList.remove('hidden'); renderTeamsTable();" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-1.5 rounded text-xs font-bold transition">Teams</button>
+                </div>
+                <button onclick="document.getElementById('modal-balans').classList.remove('hidden'); renderBalansTable();" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 rounded text-xs font-bold shadow transition mt-1">Balans historie (kunstgras/gras)</button>
+            </div>
+            
+            <div class="p-3 bg-gray-200 text-xs font-bold text-gray-600 uppercase flex justify-between">
+                <span>Nog in te plannen</span>
+                <span id="unplaced-count">0</span>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-3 space-y-3" id="sidebar-matches"></div>
+
+            <div class="p-4 border-t bg-gray-50 flex flex-col space-y-2">
+                <button onclick="resetCurrentTimeslot()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded text-sm font-bold shadow transition">Tijdsblok leegmaken</button>
+                <button onclick="deleteAllMatches()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded text-sm font-bold shadow transition">Alles verwijderen</button>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-6 bg-blue-50 overflow-y-auto flex flex-col">
+            <div class="max-w-6xl mx-auto map-grid w-full">
+                
+                <div class="bg-green-600 rounded-lg shadow-xl border-4 border-green-700 overflow-hidden flex flex-col field-container" id="container-kgv6">
+                    <div class="bg-green-800 text-white text-center py-1 font-bold text-sm flex justify-between px-3"><span>KGV 6</span> <span class="text-yellow-300 text-xs">Uitschuifgoals</span></div>
+                    <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-1 p-1">
+                        <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv6_A1"><span class="watermark text-green-900">6A1</span></div>
+                        <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv6_A2"><span class="watermark text-green-900">6A2</span></div>
+                        <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv6_B1"><span class="watermark text-green-900">6B1</span></div>
+                        <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv6_B2"><span class="watermark text-green-900">6B2</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-green-600 rounded-lg shadow-xl border-4 border-green-700 overflow-hidden flex flex-col field-container" id="container-kgv5">
+                    <div class="bg-green-800 text-white text-center py-1 font-bold text-sm flex justify-between px-3"><span>KGV 5</span> <span class="text-yellow-300 text-xs">Uitschuifgoals</span></div>
+                    <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-1 p-1">
+                        <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv5_A1"><span class="watermark text-green-900">5A1</span></div>
+                        <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv5_A2"><span class="watermark text-green-900">5A2</span></div>
+                        <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv5_B1"><span class="watermark text-green-900">5B1</span></div>
+                        <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv5_B2"><span class="watermark text-green-900">5B2</span></div>
+                    </div>
+                </div>
+
+                <div class="flex space-x-2 h-full">
+                    <div class="w-8 bg-gray-300 border-2 border-gray-400 rounded flex items-center justify-center shadow-inner overflow-hidden">
+                        <span class="transform -rotate-90 text-gray-700 font-bold text-[9px] whitespace-nowrap tracking-widest">Kl. 7 t/m 10</span>
+                    </div>
+                    <div class="flex-1 bg-yellow-200 rounded-lg shadow-xl border-4 border-yellow-400 overflow-hidden flex flex-col field-container" id="container-veld2">
+                        <div class="bg-yellow-500 text-white text-center py-1 font-bold text-sm flex justify-between px-3 text-shadow"><span>Veld 2 (Gras)</span> <span class="text-xs bg-white text-yellow-600 px-1 rounded">Alleen Heel</span></div>
+                        <div class="flex-1 p-1 flex"><div class="bg-yellow-100/50 w-full h-full rounded drop-zone flex flex-col relative" id="veld2_Heel"><span class="watermark watermark-large text-yellow-800">VELD 2</span></div></div>
+                    </div>
+                </div>
+
+                <div class="flex space-x-2 h-full">
+                    <div class="w-10 flex flex-col">
+                        <div class="bg-orange-200 border-2 border-orange-400 rounded flex items-center justify-center flex-1 shadow-inner overflow-hidden"><span class="transform -rotate-90 text-orange-800 font-bold text-[9px] whitespace-nowrap tracking-wide">Kl. 11-16</span></div>
+                        <div class="bg-orange-200 border-2 border-orange-400 rounded flex items-center justify-center h-16 mt-2 shadow-inner overflow-hidden"><span class="transform -rotate-90 text-orange-800 font-bold text-[9px] whitespace-nowrap">Ballenhok</span></div>
+                        <div class="h-6"></div>
+                        <div class="bg-orange-200 border-2 border-orange-400 rounded flex items-center justify-center h-16 shadow-inner overflow-hidden"><span class="transform -rotate-90 text-orange-800 font-bold text-[9px] whitespace-nowrap">GPC entree</span></div>
+                    </div>
+                    <div class="flex-1 bg-green-500 rounded-lg shadow-xl border-4 border-green-600 overflow-hidden flex flex-col field-container" id="container-veld4">
+                        <div class="bg-green-700 text-white text-center py-1 font-bold text-sm flex justify-between px-3"><span>HOOFDVELD 4 (Gras)</span> <span class="text-xs bg-white text-green-700 px-1 rounded">Alleen Heel</span></div>
+                        <div class="flex-1 p-1 flex"><div class="bg-green-400/30 w-full h-full rounded drop-zone flex flex-col relative" id="veld4_Heel"><span class="watermark watermark-large text-green-900">VELD 4</span></div></div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-200 rounded-lg shadow-xl border-4 border-yellow-400 overflow-hidden flex flex-col field-container" id="container-veld3">
+                    <div class="bg-yellow-500 text-white text-center py-1 font-bold text-sm flex justify-between px-3 text-shadow"><span>Veld 3 (Gras)</span> <span class="text-yellow-100 text-xs">Uitschuifgoals</span></div>
+                    <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-1 p-1">
+                        <div class="bg-yellow-100/50 rounded drop-zone flex flex-col relative" id="veld3_A1"><span class="watermark text-yellow-800">3A1</span></div>
+                        <div class="bg-yellow-100/50 rounded drop-zone flex flex-col relative" id="veld3_A2"><span class="watermark text-yellow-800">3A2</span></div>
+                        <div class="bg-yellow-100/50 rounded drop-zone flex flex-col relative" id="veld3_B1"><span class="watermark text-yellow-800">3B1</span></div>
+                        <div class="bg-yellow-100/50 rounded drop-zone flex flex-col relative" id="veld3_B2"><span class="watermark text-yellow-800">3B2</span></div>
+                    </div>
+                </div>
+
+                <div class="flex space-x-2 h-full">
+                    <div class="flex-1 flex flex-col space-y-1">
+                        <div class="flex-1 bg-green-600 rounded-lg shadow-xl border-4 border-green-700 overflow-hidden flex flex-col field-container" id="container-kgv1">
+                            <div class="bg-green-800 text-white text-center py-1 font-bold text-sm">KGV 1</div>
+                            <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-1 p-1">
+                                <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv1_A1"><span class="watermark text-green-900">1A1</span></div>
+                                <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv1_B1"><span class="watermark text-green-900">1B1</span></div>
+                                <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv1_A2"><span class="watermark text-green-900">1A2</span></div>
+                                <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv1_B2"><span class="watermark text-green-900">1B2</span></div>
+                            </div>
+                        </div>
+                        <div class="flex h-6 space-x-1">
+                            <div class="w-1/2 pr-1"><div class="bg-pink-200 border-2 border-pink-400 rounded h-full flex items-center justify-center shadow-inner overflow-hidden"><span class="text-pink-800 font-bold text-[9px] whitespace-nowrap">Entree VCV</span></div></div>
+                            <div class="w-1/2"><div class="bg-gray-300 border-2 border-gray-400 rounded h-full flex items-center justify-center shadow-inner overflow-hidden"><span class="text-gray-700 font-bold text-[9px] whitespace-nowrap">Kl. 1 t/m 6</span></div></div>
+                        </div>
+                    </div>
+                    <div class="w-10 bg-blue-200 border-2 border-blue-400 rounded flex items-center justify-center shadow-inner overflow-hidden mb-7"><span class="transform -rotate-90 text-blue-800 font-bold text-[10px] whitespace-nowrap">JVOZ Gebouw</span></div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals (Z-[200]) -->
+    <div id="modal-add" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
+        <div class="bg-white rounded-lg p-6 w-96 shadow-2xl">
+            <h2 class="text-xl font-bold mb-4">Nieuwe wedstrijd</h2>
+            <div class="space-y-3">
+                <input type="text" id="m-datum" placeholder="Datum (bijv. 10-okt)" class="w-full border p-2 rounded text-sm">
+                <input type="text" id="m-thuis" list="team-datalist" placeholder="Thuisploeg (bijv. GPC O9-1)" class="w-full border p-2 rounded text-sm">
+                <input type="text" id="m-uit" list="team-datalist" placeholder="Uitploeg (bijv. JVOZ O9-2)" class="w-full border p-2 rounded text-sm">
+                <datalist id="team-datalist"></datalist>
+                <div class="flex space-x-2">
+                    <select id="m-type" class="w-1/2 border p-2 rounded text-sm"><option>Regulier</option><option>Beker</option><option>Oefen</option><option>Blok</option></select>
+                    <select id="m-cat" class="w-1/2 border p-2 rounded text-sm"><option>B-categorie</option><option>A-categorie</option></select>
+                </div>
+                <input type="text" id="m-pref" placeholder="Voorkeurstijd (optioneel)" class="w-full border p-2 rounded text-sm">
+            </div>
+            <div class="mt-5 flex justify-end space-x-2">
+                <button onclick="document.getElementById('modal-add').classList.add('hidden')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Annuleren</button>
+                <button onclick="submitNewMatch()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Toevoegen</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-bulk" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
+        <div class="bg-white rounded-lg p-6 w-[500px] shadow-2xl">
+            <h2 class="text-xl font-bold mb-2">Bulk Excel upload</h2>
+            <p class="text-xs text-gray-600 mb-4">Plak je rijen hier. Zorg dat je kopieert vanuit Excel of een code-blok zodat de verborgen 'tabs' bewaard blijven.</p>
+            <textarea id="bulk-data" rows="8" class="w-full border p-2 rounded text-sm font-mono whitespace-pre" placeholder="23-okt    GPC 1    VC Vlissingen 1    Regulier    B-categorie"></textarea>
+            <div class="mt-4 flex justify-end space-x-2">
+                <button onclick="document.getElementById('modal-bulk').classList.add('hidden')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Annuleren</button>
+                <button onclick="processBulkUpload()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Verwerken</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-overview" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-5xl max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Plannings overzicht</h2>
+                <div class="space-x-2 print-hide">
+                    <button onclick="exportToExcel()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-bold">Excel download</button>
+                    <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-bold">Print PDF</button>
+                    <button onclick="document.getElementById('modal-overview').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 font-bold">Sluiten</button>
+                </div>
+            </div>
+            <div class="overflow-y-auto flex-1"><table class="w-full text-left border-collapse text-sm"><thead class="bg-gray-800 text-white"><tr><th class="p-2 border">Datum</th><th class="p-2 border">Start</th><th class="p-2 border">Eind</th><th class="p-2 border">Veld</th><th class="p-2 border text-yellow-300">Kl.</th><th class="p-2 border">Wedstrijd</th><th class="p-2 border">Type</th><th class="p-2 border">Cat</th></tr></thead><tbody id="overview-tbody" class="text-gray-700"></tbody></table></div>
+        </div>
+    </div>
+
+    <div id="modal-teams" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
+        <div class="bg-white rounded-lg p-6 w-[700px] max-h-[90vh] flex flex-col shadow-2xl">
+            <h2 class="text-xl font-bold mb-2">Teams Database</h2>
+            <p class="text-xs text-gray-600 mb-4">Beheer hier alle teams van de verenigingen. Pas tijden of veldformaten definitief aan.</p>
+            <div class="flex space-x-2 mb-4 bg-gray-50 p-2 rounded border">
+                <input type="text" id="team-name" placeholder="Naam (bijv. GPC O11-1)" class="flex-1 border p-2 rounded text-sm">
+                <input type="text" id="team-pref-time" placeholder="Tijd (bijv. 09:45)" class="w-24 border p-2 rounded text-sm">
+                <select id="team-size" class="w-32 border p-2 rounded text-sm">
+                    <option value="auto">Auto Formaat</option><option value="kwart">Kwart Veld</option><option value="half">Half Veld</option><option value="heel">Heel Veld</option>
+                </select>
+                <button onclick="addTeamRule()" class="px-4 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-bold">+</button>
+            </div>
+            <div class="overflow-y-auto flex-1 border rounded">
+                <table class="w-full text-left text-sm"><thead class="bg-gray-100 sticky top-0 shadow-sm"><tr><th class="p-2">Teamnaam</th><th class="p-2">Voorkeurstijd</th><th class="p-2 text-blue-700">Veld Override</th><th class="p-2">Actie</th></tr></thead><tbody id="teams-tbody"></tbody></table>
+            </div>
+            <div class="mt-4 flex justify-between items-center">
+                <span class="text-xs text-gray-400">Wordt automatisch lokaal opgeslagen.</span>
+                <button onclick="document.getElementById('modal-teams').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 font-bold">Sluiten</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-balans" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
+        <div class="bg-white rounded-lg p-6 w-[650px] max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xl font-bold">Balans historie (kunstgras/gras)</h2>
+                <div class="flex space-x-2">
+                    <input type="file" id="import-file" accept=".json" class="hidden" onchange="importBalans(event)">
+                    <button onclick="document.getElementById('import-file').click()" class="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 px-2 py-1 rounded font-bold shadow-sm transition">Importeer</button>
+                    <button onclick="exportBalans()" class="text-xs bg-green-100 text-green-700 hover:bg-green-200 px-2 py-1 rounded font-bold shadow-sm transition">Exporteer</button>
+                    <button onclick="clearBalans()" class="text-xs bg-red-100 text-red-600 hover:bg-red-200 px-2 py-1 rounded font-bold shadow-sm transition">Wis alles</button>
+                </div>
+            </div>
+            <p class="text-xs text-gray-600 mb-4">Hier zie je de opgeslagen historie. Je kunt het archief exporteren om het te delen met andere planners.</p>
+            <div class="overflow-y-auto flex-1 border rounded min-h-[200px]">
+                <table class="w-full text-left text-sm"><thead class="bg-gray-100"><tr><th class="p-2">Teamnaam</th><th class="p-2 text-green-700">Kunstgras (KGV)</th><th class="p-2 text-yellow-700">Echt Gras</th><th class="p-2">% Kunstgras</th></tr></thead><tbody id="balans-tbody"></tbody></table>
+            </div>
+            <div class="mt-4 flex justify-between items-center border-t pt-4">
+                <button onclick="saveToBalans()" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 font-bold shadow transition">Opslaan in lokaal archief</button>
+                <button onclick="document.getElementById('modal-balans').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 font-bold transition">Sluiten</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HIER ROEPEN WE JE JAVASCRIPT BESTAND AAN! -->
+    <script src="app.js"></script>
+</body>
+</html>

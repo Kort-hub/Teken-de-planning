@@ -1,0 +1,51 @@
+.drag-over { background-color: rgba(255, 255, 255, 0.4); border: 2px dashed #000; }
+.drag-error { background-color: rgba(255, 0, 0, 0.4); border: 2px dashed red; }
+.match-card { cursor: grab; user-select: none; z-index: 50; }
+.match-card:active { cursor: grabbing; }
+.field-disabled { opacity: 0.4; pointer-events: none; filter: grayscale(100%); transition: all 0.3s ease; }
+
+.map-grid {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+grid-template-rows: 1fr 1fr;
+gap: 1.5rem;
+min-height: 600px;
+height: 100%;
+}
+
+.watermark {
+position: absolute; inset: 0;
+display: flex; align-items: center; justify-content: center;
+font-size: 1.5rem; font-weight: 900; opacity: 0.15;
+pointer-events: none; user-select: none;
+}
+.watermark-large { font-size: 2.5rem; opacity: 0.2; }
+
+@media print {
+body > *:not(#modal-overview) { display: none !important; }
+body, html { background: white !important; height: auto !important; }
+#modal-overview {
+position: static !important;
+display: block !important;
+background: white !important;
+}
+#modal-overview > div {
+position: static !important;
+width: 100% !important;
+max-width: 100% !important;
+max-height: none !important;
+height: auto !important;
+box-shadow: none !important;
+padding: 0 !important;
+margin: 0 !important;
+}
+#modal-overview .overflow-y-auto {
+overflow: visible !important;
+height: auto !important;
+display: block !important;
+}
+.print-hide { display: none !important; }
+table { width: 100% !important; page-break-inside: auto; }
+tr { page-break-inside: avoid; page-break-after: auto; }
+thead { display: table-header-group; }
+}
