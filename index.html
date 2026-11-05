@@ -1,3 +1,4 @@
+@ -0,0 +1,336 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -9,12 +10,13 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col font-sans">
 
-    <header class="bg-gray-900 text-white p-4 shadow-md flex justify-between items-center relative" style="z-index: 100;">
+    <!-- === HEADER (TIJDEN, DATUM & TELLERS) === -->
+    <header class="bg-gray-900 text-white p-4 shadow-md flex justify-between items-center relative z-[100]">
         <div class="flex items-center space-x-4">
             <h1 class="text-xl font-bold text-green-400">Teken de planning</h1>
             
             <div id="time-buttons" class="flex space-x-2 text-sm bg-gray-800 p-2 rounded">
-                <button onclick="setTimeslot('08:30')" id="btn-08:30" class="px-3 py-1 rounded bg-green-500 font-bold">08:30</button>
+                <button onclick="setTimeslot('08:30')" id="btn-08:30" class="px-3 py-1 rounded bg-green-500">08:30</button>
                 <button onclick="setTimeslot('09:45')" id="btn-09:45" class="px-3 py-1 rounded hover:bg-gray-700">09:45</button>
                 <button onclick="setTimeslot('10:30')" id="btn-10:30" class="px-3 py-1 rounded hover:bg-gray-700 text-yellow-300">10:30</button>
                 <button onclick="setTimeslot('11:15')" id="btn-11:15" class="px-3 py-1 rounded hover:bg-gray-700">11:15</button>
@@ -30,7 +32,8 @@
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 
-                <div id="calendar-popup" class="hidden absolute right-0 top-full mt-2 bg-white rounded-lg shadow-2xl p-4 w-72 border border-gray-200 text-gray-800" style="z-index: 110;">
+                <!-- Kalender Popup -->
+                <div id="calendar-popup" class="hidden absolute right-0 top-full mt-2 bg-white rounded-lg shadow-2xl p-4 w-72 border border-gray-200 text-gray-800 z-[110]">
                     <div class="flex justify-between items-center mb-3">
                         <button onclick="changeMonth(-1)" class="p-1 hover:bg-gray-200 rounded text-gray-600 font-bold px-2">&lt;</button>
                         <div id="calendar-month-year" class="font-bold text-sm"></div>
@@ -46,20 +49,21 @@
         
         <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 flex items-center space-x-6">
             <div class="text-sm">
-                <span class="block text-gray-400 text-xs">Mini Doeltjes (O7)</span>
+                <span class="block text-gray-400 text-xs">Mini goals (O7)</span>
                 <span class="text-2xl font-bold text-yellow-400" id="count-mini">0</span>
             </div>
             <div class="text-sm">
-                <span class="block text-gray-400 text-xs">Kleine Doeltjes (O8-O12)</span>
+                <span class="block text-gray-400 text-xs">Kleine goals (O8-O12)</span>
                 <span class="text-2xl font-bold text-orange-400" id="count-klein">0</span>
             </div>
             <div class="text-sm">
-                <span class="block text-gray-400 text-xs">Grote Goals (9-tal)</span>
+                <span class="block text-gray-400 text-xs">Grote goals (9-tal)</span>
                 <span class="text-2xl font-bold text-blue-400" id="count-groot">0</span>
             </div>
         </div>
     </header>
 
+    <!-- === INSTELLINGEN BALK (VELDEN AAN/UIT) === -->
     <div class="bg-white border-b p-2 flex justify-center space-x-6 text-sm font-semibold shadow-sm items-center">
         <div class="flex items-center space-x-2">
             <span class="text-gray-500">Velden open:</span>
@@ -78,7 +82,10 @@
         </div>
     </div>
 
+    <!-- === HOOFD LAYOUT (ZIJBALK + PLANBORD) === -->
     <div class="flex flex-1 overflow-hidden">
+        
+        <!-- ZIJBALK -->
         <aside class="w-80 bg-white border-r shadow-lg flex flex-col z-20">
             <div class="p-4 bg-gray-50 border-b flex flex-col space-y-2">
                 <button onclick="document.getElementById('modal-add').classList.remove('hidden')" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm font-bold shadow transition">Nieuwe wedstrijd</button>
@@ -106,9 +113,11 @@
             </div>
         </aside>
 
+        <!-- PLANBORD (KAART) -->
         <main class="flex-1 p-6 bg-blue-50 overflow-y-auto flex flex-col">
             <div class="max-w-6xl mx-auto map-grid w-full">
                 
+                <!-- KGV 6 -->
                 <div class="bg-green-600 rounded-lg shadow-xl border-4 border-green-700 overflow-hidden flex flex-col field-container" id="container-kgv6">
                     <div class="bg-green-800 text-white text-center py-1 font-bold text-sm flex justify-between px-3"><span>KGV 6</span> <span class="text-yellow-300 text-xs">Uitschuifgoals</span></div>
                     <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-1 p-1">
@@ -119,6 +128,7 @@
                     </div>
                 </div>
 
+                <!-- KGV 5 -->
                 <div class="bg-green-600 rounded-lg shadow-xl border-4 border-green-700 overflow-hidden flex flex-col field-container" id="container-kgv5">
                     <div class="bg-green-800 text-white text-center py-1 font-bold text-sm flex justify-between px-3"><span>KGV 5</span> <span class="text-yellow-300 text-xs">Uitschuifgoals</span></div>
                     <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-1 p-1">
@@ -129,6 +139,7 @@
                     </div>
                 </div>
 
+                <!-- Veld 2 + Kl 7 t/m 10 -->
                 <div class="flex space-x-2 h-full">
                     <div class="w-8 bg-gray-300 border-2 border-gray-400 rounded flex items-center justify-center shadow-inner overflow-hidden">
                         <span class="transform -rotate-90 text-gray-700 font-bold text-[9px] whitespace-nowrap tracking-widest">Kl. 7 t/m 10</span>
@@ -139,9 +150,10 @@
                     </div>
                 </div>
 
+                <!-- Veld 4 + Entree/Ballenhok -->
                 <div class="flex space-x-2 h-full">
                     <div class="w-10 flex flex-col">
-                        <div class="bg-orange-200 border-2 border-orange-400 rounded flex items-center justify-center flex-1 shadow-inner overflow-hidden"><span class="transform -rotate-90 text-orange-800 font-bold text-[9px] whitespace-nowrap tracking-wide">Kl. 11-16</span></div>
+                        <div class="bg-orange-200 border-2 border-orange-400 rounded flex items-center justify-center flex-1 shadow-inner overflow-hidden"><span class="transform -rotate-90 text-orange-800 font-bold text-[9px] whitespace-nowrap tracking-wide">Kl. 11 t/m 16</span></div>
                         <div class="bg-orange-200 border-2 border-orange-400 rounded flex items-center justify-center h-16 mt-2 shadow-inner overflow-hidden"><span class="transform -rotate-90 text-orange-800 font-bold text-[9px] whitespace-nowrap">Ballenhok</span></div>
                         <div class="h-6"></div>
                         <div class="bg-orange-200 border-2 border-orange-400 rounded flex items-center justify-center h-16 shadow-inner overflow-hidden"><span class="transform -rotate-90 text-orange-800 font-bold text-[9px] whitespace-nowrap">GPC entree</span></div>
@@ -152,6 +164,7 @@
                     </div>
                 </div>
 
+                <!-- Veld 3 -->
                 <div class="bg-yellow-200 rounded-lg shadow-xl border-4 border-yellow-400 overflow-hidden flex flex-col field-container" id="container-veld3">
                     <div class="bg-yellow-500 text-white text-center py-1 font-bold text-sm flex justify-between px-3 text-shadow"><span>Veld 3 (Gras)</span> <span class="text-yellow-100 text-xs">Uitschuifgoals</span></div>
                     <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-1 p-1">
@@ -162,6 +175,7 @@
                     </div>
                 </div>
 
+                <!-- KGV 1 + Entree VCV/JVOZ + JVOZ Gebouw -->
                 <div class="flex space-x-2 h-full">
                     <div class="flex-1 flex flex-col space-y-1">
                         <div class="flex-1 bg-green-600 rounded-lg shadow-xl border-4 border-green-700 overflow-hidden flex flex-col field-container" id="container-kgv1">
@@ -173,19 +187,34 @@
                                 <div class="bg-green-500/50 rounded drop-zone flex flex-col relative" id="kgv1_B2"><span class="watermark text-green-900">1B2</span></div>
                             </div>
                         </div>
-                        <div class="flex h-6 space-x-1">
-                            <div class="w-1/2 pr-1"><div class="bg-pink-200 border-2 border-pink-400 rounded h-full flex items-center justify-center shadow-inner overflow-hidden"><span class="text-pink-800 font-bold text-[9px] whitespace-nowrap">Entree VCV</span></div></div>
-                            <div class="w-1/2"><div class="bg-gray-300 border-2 border-gray-400 rounded h-full flex items-center justify-center shadow-inner overflow-hidden"><span class="text-gray-700 font-bold text-[9px] whitespace-nowrap">Kl. 1 t/m 6</span></div></div>
+                        
+                        <!-- Entree blokje herzien: Gestapelde VCV en JVOZ entrees -->
+                        <div class="flex h-12 space-x-1">
+                            <div class="w-1/2 pr-1 flex flex-col space-y-1">
+                                <div class="bg-pink-200 border-2 border-pink-400 rounded flex-1 flex items-center justify-center shadow-inner overflow-hidden">
+                                    <span class="text-pink-800 font-bold text-[8px] whitespace-nowrap">VCV entree</span>
+                                </div>
+                                <div class="bg-blue-200 border-2 border-blue-400 rounded flex-1 flex items-center justify-center shadow-inner overflow-hidden">
+                                    <span class="text-blue-800 font-bold text-[8px] whitespace-nowrap">JVOZ entree</span>
+                                </div>
+                            </div>
+                            <div class="w-1/2">
+                                <div class="bg-gray-300 border-2 border-gray-400 rounded h-full flex items-center justify-center shadow-inner overflow-hidden">
+                                    <span class="text-gray-700 font-bold text-[9px] whitespace-nowrap">Kl. 1 t/m 6</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="w-10 bg-blue-200 border-2 border-blue-400 rounded flex items-center justify-center shadow-inner overflow-hidden mb-7"><span class="transform -rotate-90 text-blue-800 font-bold text-[10px] whitespace-nowrap">JVOZ Gebouw</span></div>
+                    <div class="w-10 bg-blue-200 border-2 border-blue-400 rounded flex items-center justify-center shadow-inner overflow-hidden mb-13"><span class="transform -rotate-90 text-blue-800 font-bold text-[10px] whitespace-nowrap">JVOZ Gebouw</span></div>
                 </div>
 
             </div>
         </main>
     </div>
 
-    <!-- Modals (Z-[200]) -->
+    <!-- === MODALS (POPUPS) Z-[200] === -->
+    
+    <!-- Modal: Nieuwe Wedstrijd -->
     <div id="modal-add" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
         <div class="bg-white rounded-lg p-6 w-96 shadow-2xl">
             <h2 class="text-xl font-bold mb-4">Nieuwe wedstrijd</h2>
@@ -207,6 +236,7 @@
         </div>
     </div>
 
+    <!-- Modal: Bulk Upload -->
     <div id="modal-bulk" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
         <div class="bg-white rounded-lg p-6 w-[500px] shadow-2xl">
             <h2 class="text-xl font-bold mb-2">Bulk Excel upload</h2>
@@ -219,6 +249,7 @@
         </div>
     </div>
 
+    <!-- Modal: Overzicht & Print/Export -->
     <div id="modal-overview" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
         <div class="bg-white rounded-lg p-6 w-11/12 max-w-5xl max-h-[90vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center mb-4">
@@ -229,10 +260,22 @@
                     <button onclick="document.getElementById('modal-overview').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 font-bold">Sluiten</button>
                 </div>
             </div>
-            <div class="overflow-y-auto flex-1"><table class="w-full text-left border-collapse text-sm"><thead class="bg-gray-800 text-white"><tr><th class="p-2 border">Datum</th><th class="p-2 border">Start</th><th class="p-2 border">Eind</th><th class="p-2 border">Veld</th><th class="p-2 border text-yellow-300">Kl.</th><th class="p-2 border">Wedstrijd</th><th class="p-2 border">Type</th><th class="p-2 border">Cat</th></tr></thead><tbody id="overview-tbody" class="text-gray-700"></tbody></table></div>
+            <div class="overflow-y-auto flex-1">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-gray-800 text-white">
+                        <tr>
+                            <th class="p-2 border">Datum</th><th class="p-2 border">Start</th><th class="p-2 border">Eind</th>
+                            <th class="p-2 border">Veld</th><th class="p-2 border text-yellow-300">Kl.</th>
+                            <th class="p-2 border">Wedstrijd</th><th class="p-2 border">Type</th><th class="p-2 border">Cat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overview-tbody" class="text-gray-700"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
+    <!-- Modal: Teams Database -->
     <div id="modal-teams" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
         <div class="bg-white rounded-lg p-6 w-[700px] max-h-[90vh] flex flex-col shadow-2xl">
             <h2 class="text-xl font-bold mb-2">Teams Database</h2>
@@ -246,7 +289,12 @@
                 <button onclick="addTeamRule()" class="px-4 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-bold">+</button>
             </div>
             <div class="overflow-y-auto flex-1 border rounded">
-                <table class="w-full text-left text-sm"><thead class="bg-gray-100 sticky top-0 shadow-sm"><tr><th class="p-2">Teamnaam</th><th class="p-2">Voorkeurstijd</th><th class="p-2 text-blue-700">Veld Override</th><th class="p-2">Actie</th></tr></thead><tbody id="teams-tbody"></tbody></table>
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-100 sticky top-0 shadow-sm">
+                        <tr><th class="p-2">Teamnaam</th><th class="p-2">Voorkeurstijd</th><th class="p-2 text-blue-700">Veld Override</th><th class="p-2">Actie</th></tr>
+                    </thead>
+                    <tbody id="teams-tbody"></tbody>
+                </table>
             </div>
             <div class="mt-4 flex justify-between items-center">
                 <span class="text-xs text-gray-400">Wordt automatisch lokaal opgeslagen.</span>
@@ -255,6 +303,7 @@
         </div>
     </div>
 
+    <!-- Modal: Balans Historie -->
     <div id="modal-balans" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[200]">
         <div class="bg-white rounded-lg p-6 w-[650px] max-h-[90vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center mb-2">
@@ -268,7 +317,12 @@
             </div>
             <p class="text-xs text-gray-600 mb-4">Hier zie je de opgeslagen historie. Je kunt het archief exporteren om het te delen met andere planners.</p>
             <div class="overflow-y-auto flex-1 border rounded min-h-[200px]">
-                <table class="w-full text-left text-sm"><thead class="bg-gray-100"><tr><th class="p-2">Teamnaam</th><th class="p-2 text-green-700">Kunstgras (KGV)</th><th class="p-2 text-yellow-700">Echt Gras</th><th class="p-2">% Kunstgras</th></tr></thead><tbody id="balans-tbody"></tbody></table>
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-100">
+                        <tr><th class="p-2">Teamnaam</th><th class="p-2 text-green-700">Kunstgras (KGV)</th><th class="p-2 text-yellow-700">Echt Gras</th><th class="p-2">% Kunstgras</th></tr>
+                    </thead>
+                    <tbody id="balans-tbody"></tbody>
+                </table>
             </div>
             <div class="mt-4 flex justify-between items-center border-t pt-4">
                 <button onclick="saveToBalans()" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 font-bold shadow transition">Opslaan in lokaal archief</button>
@@ -277,7 +331,7 @@
         </div>
     </div>
 
-    <!-- HIER ROEPEN WE JE JAVASCRIPT BESTAND AAN! -->
+    <!-- JAVASCRIPT KOPPELING -->
     <script src="app.js"></script>
 </body>
 </html>
