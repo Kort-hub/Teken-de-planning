@@ -1,3 +1,4 @@
+@ -0,0 +1,1265 @@
 // ==========================================
 // 🛠️ HET CONFIGURATIE BLOK 🛠️
 // Pas de regels hier aan zonder in de complexe code te hoeven zoeken!
@@ -39,6 +40,9 @@ const PLANNER_CONFIG = {
     }
 };
 
+// ==========================================
+// GLOBALE STATE & APPLICATIE INITIALISATIE
+// ==========================================
 let currentTimeslot = '08:30';
 let activeDate = '31-okt'; 
 let matches = []; 
@@ -57,6 +61,9 @@ function initCalendarState() {
 }
 initCalendarState();
 
+// ==========================================
+// KALENDER LOGICA
+// ==========================================
 function toggleCalendar() {
     const popup = document.getElementById('calendar-popup');
     popup.classList.toggle('hidden');
@@ -138,6 +145,9 @@ function isWeekday(dateStr) {
     return (day !== 0 && day !== 6); 
 }
 
+// ==========================================
+// WEDSTRIJD DUREN & CONFLICT CONTROLE
+// ==========================================
 function getMatchDuration(cat, thuis, size) {
     let t = (thuis || '').toUpperCase();
     if(t.includes('O11') || t.includes('O12') || t.includes('O13') || t.includes('O14') || t.includes('MO11') || t.includes('MO12')) return PLANNER_CONFIG.speelduur.O11_tot_O14;
@@ -173,6 +183,9 @@ function checkFieldConflict(matchDate, proposedCellId, proposedSize, proposedTim
     return false; 
 }
 
+// ==========================================
+// GOALS BEREKENEN & DASHBOARD
+// ==========================================
 function getGoalsForMatch(m) {
     let mini = 0; let klein = 0; let groot = 0;
     const cellId = m.cellId || '';
@@ -205,6 +218,9 @@ function updateDashboard() {
     document.getElementById('count-groot').innerText = countGroot;
 }
 
+// ==========================================
+// TEAMS DATABASE BEHEER
+// ==========================================
 let defaultTeamsDB = [
     { name: "GPC 1", prefTime: "15:00", size: "auto" }, { name: "GPC 2", prefTime: "13:00", size: "auto" }, { name: "GPC 3", prefTime: "13:00", size: "auto" }, { name: "GPC 4", prefTime: "13:00", size: "auto" }, { name: "GPC 5", prefTime: "13:00", size: "auto" },
     { name: "GPC 35+ 1", prefTime: "19:30", size: "auto" }, { name: "GPC 35+ 2", prefTime: "19:30", size: "auto" },
@@ -291,6 +307,9 @@ function determinePrefTime(teamThuis, teamUit) {
     return '';
 }
 
+// ==========================================
+// VELDEN AAN/UIT BEHEER
+// ==========================================
 let defaultFields = { 'kgv6': true, 'kgv5': true, 'veld2': false, 'veld4': false, 'veld3': false, 'kgv1': true };
 let activeFieldsByDate = {};
 
@@ -365,6 +384,9 @@ function unplaceMatchesFromField(fieldId, targetDate) {
     if(changed) refreshUI();
 }
 
+// ==========================================
+// KLEEDKAMER BEHEER
+// ==========================================
 window.editLocker = function(e, id) {
     e.stopPropagation(); 
     let m = matches.find(x => x.id === id);
@@ -635,12 +657,16 @@ function refreshUI() {
         let btn = document.getElementById('btn-' + time);
         if (!btn) {
             btn = document.createElement('button'); btn.id = 'btn-' + time; btn.innerText = time; btn.onclick = () => setTimeslot(time);
-            btn.className = "px-3 py-1 rounded font-bold hover:bg-gray-700 text-white"; container.appendChild(btn);
+            btn.className = "px-3 py-1 rounded hover:bg-gray-700 text-white"; container.appendChild(btn);
         }
         document.querySelectorAll('#time-buttons button').forEach(b => {
-            b.classList.remove('bg-green-500'); if(!b.classList.contains('text-yellow-300')) b.classList.add('hover:bg-gray-700'); 
+            b.classList.remove('bg-green-500'); 
+            b.classList.remove('font-bold'); // Zorgt dat de geselecteerde state strakker wordt
+            if(!b.classList.contains('text-yellow-300')) b.classList.add('hover:bg-gray-700'); 
         });
-        btn.classList.add('bg-green-500'); btn.classList.remove('hover:bg-gray-700'); refreshUI();
+        btn.classList.add('bg-green-500'); 
+        btn.classList.remove('hover:bg-gray-700'); 
+        refreshUI();
     }
 
     function getTeamStyle(thuis) {
@@ -767,7 +793,6 @@ function refreshUI() {
     let draggedMatchId = null;
     function handleDragStart(e) { draggedMatchId = e.target.dataset.id; e.dataTransfer.setData('text/plain', draggedMatchId); }
     
-    // Zorgt ervoor dat de robot pas start als de hele HTML pagina (knoppen etc) is geladen.
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.drop-zone').forEach(zone => {
             zone.addEventListener('dragover', handleDragOverZone);
@@ -1200,9 +1225,9 @@ function refreshUI() {
         html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Wedstrijd</th>';
         html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Type</th>';
         html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Cat</th>';
-        html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Mini Doeltjes</th>';
-        html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Kleine Doeltjes</th>';
-        html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Grote Doeltjes</th>';
+        html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Mini goals (O7)</th>';
+        html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Kleine goals (O8-O12)</th>';
+        html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Grote goals (9-tal)</th>';
         html += '</tr></thead><tbody>';
 
         sorted.forEach(m => {
