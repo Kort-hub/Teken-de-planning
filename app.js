@@ -1,4 +1,3 @@
-@ -0,0 +1,1265 @@
 // ==========================================
 // 🛠️ HET CONFIGURATIE BLOK 🛠️
 // Pas de regels hier aan zonder in de complexe code te hoeven zoeken!
