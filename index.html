@@ -94,7 +94,7 @@
                 </button>
                 <div class="flex space-x-2 mt-2">
                     <button onclick="document.getElementById('modal-overview').classList.remove('hidden'); renderOverviewTable();" class="flex-1 bg-gray-800 hover:bg-gray-900 text-white py-1.5 rounded text-xs font-bold transition">Overzicht</button>
-                    <button onclick="document.getElementById('modal-teams').classList.remove('hidden'); renderTeamsTable();" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-1.5 rounded text-xs font-bold transition">Teams</button>
+                    <button onclick="document.getElementById('modal-teams').classList.remove('hidden'); renderTeamsTable();" class="flex-1 bg-gray-800 hover:bg-gray-900 text-white py-1.5 rounded text-xs font-bold transition">Teams</button>
                 </div>
                 <button onclick="document.getElementById('modal-balans').classList.remove('hidden'); renderBalansTable();" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 rounded text-xs font-bold shadow transition mt-1">Balans historie (kunstgras/gras)</button>
             </div>
@@ -143,13 +143,13 @@
                     <div class="w-8 bg-gray-300 border-2 border-gray-400 rounded flex items-center justify-center shadow-inner overflow-hidden">
                         <span class="transform -rotate-90 text-gray-700 font-bold text-[9px] whitespace-nowrap tracking-widest">Kl. 7 t/m 10</span>
                     </div>
-                    <div class="flex-1 bg-yellow-200 rounded-lg shadow-xl border-4 border-yellow-400 overflow-hidden flex flex-col field-container" id="container-veld2">
-                        <div class="bg-yellow-500 text-white text-center py-1 font-bold text-sm flex justify-between px-3 text-shadow"><span>Veld 2 (Gras)</span> <span class="text-xs bg-white text-yellow-600 px-1 rounded">Alleen Heel</span></div>
-                        <div class="flex-1 p-1 flex"><div class="bg-yellow-100/50 w-full h-full rounded drop-zone flex flex-col relative" id="veld2_Heel"><span class="watermark watermark-large text-yellow-800">VELD 2</span></div></div>
+                    <div class="flex-1 bg-green-700 rounded-lg shadow-xl border-4 border-green-800 overflow-hidden flex flex-col field-container" id="container-veld2">
+                        <div class="bg-green-900 text-white text-center py-1 font-bold text-sm flex justify-between px-3"><span>Veld 2 (Gras)</span> <span class="text-xs bg-white text-green-800 px-1 rounded">Alleen Heel</span></div>
+                        <div class="flex-1 p-1 flex"><div class="bg-green-600/50 w-full h-full rounded drop-zone flex flex-col relative" id="veld2_Heel"><span class="watermark watermark-large text-green-900">VELD 2</span></div></div>
                     </div>
                 </div>
 
-                <!-- Veld 4 + Entree/Ballenhok -->
+               <!-- Veld 4 + Entree/Ballenhok -->
                 <div class="flex space-x-2 h-full">
                     <div class="w-10 flex flex-col">
                         <div class="bg-orange-200 border-2 border-orange-400 rounded flex items-center justify-center flex-1 shadow-inner overflow-hidden"><span class="transform -rotate-90 text-orange-800 font-bold text-[9px] whitespace-nowrap tracking-wide">Kl. 11 t/m 16</span></div>
@@ -157,20 +157,20 @@
                         <div class="h-6"></div>
                         <div class="bg-orange-200 border-2 border-orange-400 rounded flex items-center justify-center h-16 shadow-inner overflow-hidden"><span class="transform -rotate-90 text-orange-800 font-bold text-[9px] whitespace-nowrap">GPC entree</span></div>
                     </div>
-                    <div class="flex-1 bg-green-500 rounded-lg shadow-xl border-4 border-green-600 overflow-hidden flex flex-col field-container" id="container-veld4">
-                        <div class="bg-green-700 text-white text-center py-1 font-bold text-sm flex justify-between px-3"><span>HOOFDVELD 4 (Gras)</span> <span class="text-xs bg-white text-green-700 px-1 rounded">Alleen Heel</span></div>
-                        <div class="flex-1 p-1 flex"><div class="bg-green-400/30 w-full h-full rounded drop-zone flex flex-col relative" id="veld4_Heel"><span class="watermark watermark-large text-green-900">VELD 4</span></div></div>
+                    <div class="flex-1 bg-green-700 rounded-lg shadow-xl border-4 border-green-800 overflow-hidden flex flex-col field-container" id="container-veld4">
+                        <div class="bg-green-900 text-white text-center py-1 font-bold text-sm flex justify-between px-3"><span>Veld 4 (Gras)</span> <span class="text-xs bg-white text-green-800 px-1 rounded">Alleen Heel</span></div>
+                        <div class="flex-1 p-1 flex"><div class="bg-green-600/50 w-full h-full rounded drop-zone flex flex-col relative" id="veld4_Heel"><span class="watermark watermark-large text-green-900">VELD 4</span></div></div>
                     </div>
                 </div>
 
                 <!-- Veld 3 -->
-                <div class="bg-yellow-200 rounded-lg shadow-xl border-4 border-yellow-400 overflow-hidden flex flex-col field-container" id="container-veld3">
-                    <div class="bg-yellow-500 text-white text-center py-1 font-bold text-sm flex justify-between px-3 text-shadow"><span>Veld 3 (Gras)</span> <span class="text-yellow-100 text-xs">Uitschuifgoals</span></div>
+                <div class="bg-green-700 rounded-lg shadow-xl border-4 border-green-800 overflow-hidden flex flex-col field-container" id="container-veld3">
+                    <div class="bg-green-900 text-white text-center py-1 font-bold text-sm flex justify-between px-3"><span>Veld 3 (Gras)</span> <span class="text-yellow-300 text-xs">Uitschuifgoals</span></div>
                     <div class="flex-1 grid grid-cols-2 grid-rows-2 gap-1 p-1">
-                        <div class="bg-yellow-100/50 rounded drop-zone flex flex-col relative" id="veld3_A1"><span class="watermark text-yellow-800">3A1</span></div>
-                        <div class="bg-yellow-100/50 rounded drop-zone flex flex-col relative" id="veld3_A2"><span class="watermark text-yellow-800">3A2</span></div>
-                        <div class="bg-yellow-100/50 rounded drop-zone flex flex-col relative" id="veld3_B1"><span class="watermark text-yellow-800">3B1</span></div>
-                        <div class="bg-yellow-100/50 rounded drop-zone flex flex-col relative" id="veld3_B2"><span class="watermark text-yellow-800">3B2</span></div>
+                        <div class="bg-green-600/50 rounded drop-zone flex flex-col relative" id="veld3_A1"><span class="watermark text-green-900">3A1</span></div>
+                        <div class="bg-green-600/50 rounded drop-zone flex flex-col relative" id="veld3_A2"><span class="watermark text-green-900">3A2</span></div>
+                        <div class="bg-green-600/50 rounded drop-zone flex flex-col relative" id="veld3_B1"><span class="watermark text-green-900">3B1</span></div>
+                        <div class="bg-green-600/50 rounded drop-zone flex flex-col relative" id="veld3_B2"><span class="watermark text-green-900">3B2</span></div>
                     </div>
                 </div>
 
