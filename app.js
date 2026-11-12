@@ -42,9 +42,16 @@ const PLANNER_CONFIG = {
 // ==========================================
 // GLOBALE STATE & APPLICATIE INITIALISATIE
 // ==========================================
-let currentTimeslot = '08:30';
-let activeDate = '31-okt'; 
-let matches = []; 
+// Haal gegevens uit het geheugen, of start vers
+let plannerState = JSON.parse(localStorage.getItem('plannerState')) || { activeDate: '31-okt', currentTimeslot: '08:30' };
+let activeDate = plannerState.activeDate;
+let currentTimeslot = plannerState.currentTimeslot;
+let matches = JSON.parse(localStorage.getItem('plannerMatches')) || [];
+
+function savePlannerData() {
+    localStorage.setItem('plannerState', JSON.stringify({ activeDate, currentTimeslot }));
+    localStorage.setItem('plannerMatches', JSON.stringify(matches));
+}
 
 const monthNamesLong = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
 const monthNamesShort = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
@@ -579,6 +586,7 @@ function assignLockerRooms() {
 }
 function refreshUI() {
         assignLockerRooms();
+        savePlannerData();
         renderSidebar();
         renderBoard();
         updateDashboard();
@@ -1224,6 +1232,8 @@ function refreshUI() {
         html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Wedstrijd</th>';
         html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Type</th>';
         html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Cat</th>';
+        html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Scheidsrechter</th>';
+        html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Bijzonderheden</th>';
         html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Mini goals (O7)</th>';
         html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Kleine goals (O8-O12)</th>';
         html += '<th style="background-color:#1f2937;color:#ffffff;font-weight:bold;">Grote goals (9-tal)</th>';
@@ -1251,6 +1261,7 @@ function refreshUI() {
                 <td>${m.date}</td><td>${m.time}</td><td>${endStr}</td><td>${fieldName}</td>
                 <td>${klTekst}</td>
                 <td>${m.thuis} - ${m.uit}</td><td>${m.type}</td><td>${m.cat}</td>
+                <td></td><td></td>
                 <td>${g.mini}</td><td>${g.klein}</td><td>${g.groot}</td>
             </tr>`;
         });
